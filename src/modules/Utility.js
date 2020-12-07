@@ -1,7 +1,6 @@
 const fs = require('fs')
 const path = require('path')
 const Settings = require('./Settings')
-const chalk = require('chalk');
 
 module.exports = {
 
@@ -17,7 +16,7 @@ module.exports = {
     const directory = './public/images/preview';
     fs.readdir(directory, (err, files) => {
       if (err) throw err;
-    
+
       for (const file of files) {
         fs.unlink(path.join(directory, file), err => {
           if (err) throw err;
@@ -25,6 +24,31 @@ module.exports = {
       }
     });
   },
+
+  DeleteCapturedImages: function () {
+    const directory = './public/images/captures';
+    fs.readdir(directory, (err, files) => {
+      if (err) throw err;
+      for (const file of files) {
+        fs.unlink(path.join(directory, file), err => {
+          if (err) throw err;
+        });
+      }
+    });
+  },
+
+  DeleteCompressedImages: function () {
+    const directory = './public/images/compressed';
+    fs.readdir(directory, (err, files) => {
+      if (err) throw err;
+      for (const file of files) {
+        fs.unlink(path.join(directory, file), err => {
+          if (err) throw err;
+        });
+      }
+    });
+  },
+
 
   setDate: function () {
     const d = new Date()

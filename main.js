@@ -1,8 +1,18 @@
 const path = require('path')
 const url = require('url')
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
+const sharp = require('sharp');
+
+const Camera = require('./src/modules/Camera')
+const Utility = require('./src/modules/Utility')
 
 let mainWindow
+
+// TODO: Temp info, replace with local store data
+let info = {
+	user: 'kevinmerinsky',
+	event: 'Holiday-Party'
+}
 
 let isDev = false
 
@@ -50,14 +60,15 @@ function createMainWindow() {
 
 		// Open devtools if dev
 		if (isDev) {
-			const {
-				default: installExtension,
-				REACT_DEVELOPER_TOOLS,
-			} = require('electron-devtools-installer')
+			// TODO: Fix implementation of react devtools
+			// const {
+			// 	default: installExtension,
+			// 	REACT_DEVELOPER_TOOLS,
+			// } = require('electron-devtools-installer')
 
-			installExtension(REACT_DEVELOPER_TOOLS).catch((err) =>
-				console.log('Error loading React DevTools: ', err)
-			)
+			// installExtension(REACT_DEVELOPER_TOOLS).catch((err) =>
+			// 	console.log('Error loading React DevTools: ', err)
+			// )
 			mainWindow.webContents.openDevTools()
 		}
 	})
@@ -78,6 +89,23 @@ app.on('activate', () => {
 		createMainWindow()
 	}
 })
+ 
+
+ipcMain.on('Image:Capture', (e) => {
+	let {user, event} = info
+	Camera.Capture(user, event)
+	.then((ImageName) => {
+		sharp(`./public/images/captures/${ImageName}`)
+			.resize(2000)
+			.jpeg({ quality: 100 })
+			.toFile(`./public/images/compressed/${ImageName}`)
+			.catch((err) => console.warn(err)); // send a warning to the console if there are any errors
+	})
+}) 
+
+
+
+
 
 // Stop error
 app.allowRendererProcessReuse = true

@@ -1,3 +1,4 @@
+import { ipcRenderer } from "electron";
 import React, { Component } from "react";
 import {
   Route,
@@ -6,6 +7,7 @@ import {
 } from "react-router-dom";
 import styled from 'styled-components';
 import Navbar from '../shared/Navbar';
+
 
 
 const PhotoPageStyles = styled.nav`
@@ -18,10 +20,15 @@ p {
 }
 `;
 
+function trigger(){
+  ipcRenderer.send('Image:Capture')
+}
+
 function PhotoPage() {
   return (
     <PhotoPageStyles>
       <h1>Photo Content</h1>
+      <button onClick={trigger} className="CaptureButton">Take Photo</button>
       <Navbar />
     </PhotoPageStyles>
   );
