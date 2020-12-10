@@ -5,7 +5,7 @@ const { app, BrowserWindow, ipcMain } = require('electron')
 
 const Camera = require('./src/modules/Camera') // Camera function via gPhoto2
 const Utility = require('./src/modules/Utility')
-// const Sharp = require('./src/modules/Sharp')
+const Jimp = require('./src/modules/Jimp')
 const Spaces = require('./src/modules/Spaces')
 const API = require('./src/modules/API')
 
@@ -101,12 +101,9 @@ ipcMain.on('Image:Capture', (e) => {
 	let {user, event} = info
 	Camera.Capture(user, event)
 	.then((ImageName) => {
-		// Sharp.Compress(ImageName, 80)
-		.then((ImageName) => {
-			Spaces.Upload(ImageName)
-			API.POST('assets', ImageName)
-		})
+		Jimp.Compress(ImageName)
 	})
+
 	.catch(err => console.log(err)) 
 }) 
 

@@ -12,23 +12,22 @@ const s3 = new AWS.S3({
 
 module.exports = {
 
-  
-  
-  Upload: async function (ImageName) {
+  Upload: async function (ImagePath) {
+    //TODO: Add image name at a paramater to be used as S3 key
     let params = { 
       Bucket: process.env.DO_BUCKET_NAME,  
-      Key: ImageName,
+      Key: ImagePath,
       ContentType: "image/jpeg",
-      Body: fs.readFileSync( __dirname + `/../../public/images/compressed/${ImageName}`),
+      Body: fs.readFileSync(ImagePath),
       ACL: 'public-read',
     }
     s3.putObject(params, (err, data) => {
       if(err) {
         console.log(err)
       } else {
-        console.log(`Uploaded: ${ImageName}`)
+        console.log(`Uploaded: ${ImagePath}`)
         console.log(data)
-        return ImageName
+        return ImagePath
       }
     })  
   }
