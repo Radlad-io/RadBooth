@@ -1,10 +1,14 @@
 const path = require('path')
 const url = require('url')
+require('dotenv').config()
 const { app, BrowserWindow, ipcMain } = require('electron')
-const sharp = require('sharp');
 
-const Camera = require('./src/modules/Camera')
+const Camera = require('./src/modules/Camera') // Camera function via gPhoto2
 const Utility = require('./src/modules/Utility')
+// const Sharp = require('./src/modules/Sharp')
+const Spaces = require('./src/modules/Spaces')
+const API = require('./src/modules/API')
+
 
 let mainWindow
 
@@ -13,6 +17,7 @@ let info = {
 	user: 'kevinmerinsky',
 	event: 'Holiday-Party'
 }
+
 
 let isDev = false
 
@@ -91,19 +96,19 @@ app.on('activate', () => {
 })
  
 
+
 ipcMain.on('Image:Capture', (e) => {
 	let {user, event} = info
 	Camera.Capture(user, event)
 	.then((ImageName) => {
-		sharp(`./public/images/captures/${ImageName}`)
-			.resize(2000)
-			.jpeg({ quality: 100 })
-			.toFile(`./public/images/compressed/${ImageName}`)
-			.catch((err) => console.warn(err)); // send a warning to the console if there are any errors
+		// Sharp.Compress(ImageName, 80)
+		.then((ImageName) => {
+			Spaces.Upload(ImageName)
+			API.POST('assets', ImageName)
+		})
 	})
+	.catch(err => console.log(err)) 
 }) 
-
-
 
 
 
